@@ -1,0 +1,22 @@
+###
+POST  http://localhost:3000/
+
+
+###
+POST  http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "login":"testName",
+    "password": "Password1"
+}
+###
+GET http://localhost:3000/renew/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2E3MTE4OTlkMzZmYzNlZWFlNjFiODAiLCJuYW1lIjoidGVzdE5hbWUiLCJyb2xlIjoidGVzdFJvbGUiLCJpYXQiOjE2NzE5ODA3MDIsImV4cCI6MTY3MzI3NjcwMn0.Mr5HD33EWSe88RPYxoOXGOROGyWTQYKF-GvTdghLBlg
+
+
+###
+
+GET http://localhost:3000/logout/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2E3MTE4OTlkMzZmYzNlZWFlNjFiODAiLCJuYW1lIjoidGVzdE5hbWUiLCJyb2xlIjoidGVzdFJvbGUiLCJpYXQiOjE2NzE5ODA3MDIsImV4cCI6MTY3MzI3NjcwMn0.Mr5HD33EWSe88RPYxoOXGOROGyWTQYKF-GvTdghLBlg
+
+
+
