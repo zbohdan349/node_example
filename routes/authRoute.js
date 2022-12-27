@@ -1,27 +1,14 @@
 require("dotenv").config();
 const express = require('express');
-const res = require('express/lib/response');
 const router = express.Router();
 const User = require('../models/User')
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const redis = require('redis');
-const client = redis.createClient();
+const client =require('../connection')
 
-client.on('error', (err) => console.log('Redis Client Error', err));
-client.connect();
+
 //////////
 
-
-router.get('/', async (req,res) =>{
-    try {
-        const subscribers =  await Subscriber.find();
-        res.json(subscribers)
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-})
-///////////
 router.post('/', async (req,res) =>{
     try {
         const user =  new User(
@@ -57,27 +44,27 @@ router.post('/login', async (req,res) =>{
         const accessToken = jwt.sign(userInfo,process.env.JWT_ACCESS_SECRET,{expiresIn:"1m"})
         const refreshToken = jwt.sign(userInfo,process.env.JWT_REFRESH_SECRET,{expiresIn:"15d"})
         
-        await client.set(`refreshToken_${refreshToken}`, '3');
-        const value = await client.get(`refreshToken_${refreshToken}`);
-        
-        if(value){
-            res.status(200).json(
-                {
-                    accessToken,
-                    refreshToken
-                }
-            );
-        }else{
-            res.status(500).json({err: "!!!!"})
-        }
-
+        client
+            .set(`refreshToken:${refreshToken}`, '3')
+            .then(() => {
+                res.status(200).json(
+                    {
+                        accessToken,
+                        refreshToken
+                    }
+                );
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json({err: "Refresh token generation error"})
+            })
     }
 })
 router.get('/renew/:refreshToken', async (req,res) =>{
 
     try {
         const refreshToken = req.params.refreshToken
-        const value = await client.get(`refreshToken_${refreshToken}`)
+        const value = await client.get(`refreshToken:${refreshToken}`)
 
         if (value) {
             try {
@@ -92,7 +79,7 @@ router.get('/renew/:refreshToken', async (req,res) =>{
                 res.status(201).json({accessToken})
 
               } catch(err) {
-                client.del(`refreshToken_${refreshToken}`)
+                client.del(`refreshToken:${refreshToken}`)
                 res.status(401).json({err:"REFRESH_TOKEN is invalid"})
               }
         }else{
@@ -107,10 +94,10 @@ router.get('/logout/:refreshToken', async (req,res) =>{
 
     try {
         const refreshToken = req.params.refreshToken;
-        const value = await client.get(`refreshToken_${refreshToken}`)
+        const value = await client.get(`refreshToken:${refreshToken}`)
 
         if (value) {
-            client.del(`refreshToken_${refreshToken}`)
+            client.del(`refreshToken:${refreshToken}`)
             res.status(200).json();
         }else{
             res.status(401).json({err:"REFRESH_TOKEN is invalid"})
