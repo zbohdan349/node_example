@@ -11,12 +11,21 @@ Content-Type: application/json
     "password": "Password1"
 }
 ###
-GET http://localhost:3000/renew/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2E3MTE4OTlkMzZmYzNlZWFlNjFiODAiLCJuYW1lIjoidGVzdE5hbWUiLCJyb2xlIjoidGVzdFJvbGUiLCJpYXQiOjE2NzIxMjk4NTMsImV4cCI6MTY3MzQyNTg1M30.8EdZueXrtl_1lAl-mWRV9qlXFU8c9vxm1xgTbNnn1qE
+POST  http://localhost:3000/renew
+Content-Type: application/json
 
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2E3MTE4OTlkMzZmYzNlZWFlNjFiODAiLCJuYW1lIjoidGVzdE5hbWUiLCJyb2xlIjoidGVzdFJvbGUiLCJpYXQiOjE2NzIxNDkyNTcsImV4cCI6MTY3MzQ0NTI1N30.MtNgm_fYL3_y1W1qCVsbJ23NBFk2vYmrirHDl2QRDBQ"
+}
 
 ###
 
-GET http://localhost:3000/logout/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2E3MTE4OTlkMzZmYzNlZWFlNjFiODAiLCJuYW1lIjoidGVzdE5hbWUiLCJyb2xlIjoidGVzdFJvbGUiLCJpYXQiOjE2NzIxMjk4NTMsImV4cCI6MTY3MzQyNTg1M30.8EdZueXrtl_1lAl-mWRV9qlXFU8c9vxm1xgTbNnn1qE
+POST  http://localhost:3000/logout
+Content-Type: application/json
+
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2E3MTE4OTlkMzZmYzNlZWFlNjFiODAiLCJuYW1lIjoidGVzdE5hbWUiLCJyb2xlIjoidGVzdFJvbGUiLCJpYXQiOjE2NzIxNDkyNTcsImV4cCI6MTY3MzQ0NTI1N30.MtNgm_fYL3_y1W1qCVsbJ23NBFk2vYmrirHDl2QRDBQ"
+}
 
 
 

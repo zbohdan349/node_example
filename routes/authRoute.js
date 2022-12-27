@@ -60,10 +60,10 @@ router.post('/login', async (req,res) =>{
             })
     }
 })
-router.get('/renew/:refreshToken', async (req,res) =>{
+router.post('/renew', async (req,res) =>{
 
     try {
-        const refreshToken = req.params.refreshToken
+        const refreshToken = req.body.refreshToken
         const value = await client.get(`refreshToken:${refreshToken}`)
 
         if (value) {
@@ -90,10 +90,10 @@ router.get('/renew/:refreshToken', async (req,res) =>{
     }
 })
 
-router.get('/logout/:refreshToken', async (req,res) =>{
+router.post('/logout', async (req,res) =>{
 
     try {
-        const refreshToken = req.params.refreshToken;
+        const refreshToken = req.body.refreshToken;
         const value = await client.get(`refreshToken:${refreshToken}`)
 
         if (value) {
