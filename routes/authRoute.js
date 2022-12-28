@@ -80,6 +80,10 @@ router.post('/renew', async (req,res) =>{
                 res.status(401).json({err:"REFRESH_TOKEN is invalid"})
             }  
         })
+        .catch(e => {
+            console.log(e);
+            res.status(500).json({err:"Renew error"})
+        })
 })
 
 router.post('/logout', async (req,res) =>{
@@ -100,6 +104,10 @@ router.post('/logout', async (req,res) =>{
             }else{
                 res.status(401).json({err:"REFRESH_TOKEN is invalid"})
             }
+        })
+        .catch(e => {
+            console.log(e);
+            res.status(500).json({err:"Logout error"})
         })
 })
 
