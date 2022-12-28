@@ -14,8 +14,8 @@ router.post('/login', async (req,res) =>{
     }
 
     User
-        .findOne({login:req.body.login})
-        .then( user =>{
+        .findOne({name:req.body.login})
+        .then( user => {
             if(!bcrypt.compareSync(
                 req.body.password,
                 user.password
@@ -24,14 +24,14 @@ router.post('/login', async (req,res) =>{
         }else{
             const userInfo = {
                 _id: user._id.toString(),
-                name: user.login,
+                name: user.name,
                 role: user.role
             }
             const accessToken = jwt.sign(userInfo,process.env.JWT_ACCESS_SECRET,{expiresIn:"1m"})
             const refreshToken = jwt.sign(userInfo,process.env.JWT_REFRESH_SECRET,{expiresIn:"15d"})
             
             client
-                .set(`refreshToken:${refreshToken}`, '3')
+                .set(`refreshToken:${refreshToken}`, '1')
                 .then(() => {
                     res.status(200).json(
                         {
@@ -59,19 +59,24 @@ router.post('/renew', async (req,res) =>{
 
     client
         .exists(`refreshToken:${refreshToken}`)
-        .then( (val) => {
-            if(val){
+        .then((result) => {
+            if(result){
                 try {
                     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET)
-    
-                    const accessToken =jwt.sign({
-                        _id:decoded._id,
-                        name:decoded.name,
-                        role:decoded.role
-                    },process.env.JWT_ACCESS_SECRET,{expiresIn:"1m"})
-    
-                    res.status(201).json({accessToken})
-    
+
+                    User
+                        .findOne({_id:decoded._id})
+                        .then(user => {
+                            const accessToken =jwt.sign({
+                                _id:user._id,
+                                name:user.name,
+                                role:user.role
+                            },process.env.JWT_ACCESS_SECRET,{expiresIn:"1m"})
+                            res.status(201).json({accessToken})
+                        })
+                        .catch(() => {
+                            res.status(404).json({err:"User is not found"})
+                        })
                     } catch(err) {
                         client.del(`refreshToken:${refreshToken}`)
                         res.status(401).json({err:"REFRESH_TOKEN is invalid"})
@@ -96,8 +101,8 @@ router.post('/logout', async (req,res) =>{
     const refreshToken = req.body.refreshToken;
     client
         .exists(`refreshToken:${refreshToken}`)
-        .then((val) => {
-            if(val){
+        .then(result => {
+            if(result){
                 client
                 .del(`refreshToken:${refreshToken}`)
                 .then(() => res.status(200).json())

@@ -1,5 +1,13 @@
 require("dotenv").config();
 
+if(
+    !process.env.JWT_ACCESS_SECRET ||
+    !process.env.JWT_REFRESH_SECRET ||
+    !process.env.ALLOWED_HOST ||
+    !process.env.MONGODB_URL){
+        throw new Error ("Missing required fields in configuration file")
+}
+
 const express = require("express");
 const app = express();
 
