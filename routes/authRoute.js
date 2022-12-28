@@ -14,7 +14,7 @@ router.post('/login', async (req,res) =>{
     }
 
     User
-        .findOne({name:req.body.login})
+        .findOne({login:req.body.login})
         .then( user => {
             if(!bcrypt.compareSync(
                 req.body.password,

@@ -5,7 +5,8 @@ if(
     !process.env.JWT_REFRESH_SECRET ||
     !process.env.ALLOWED_HOST ||
     !process.env.MONGODB_URL){
-        throw new Error ("Missing required fields in configuration file")
+        console.error("Missing required fields in configuration file")
+        process.exit(1)
 }
 
 const express = require("express");
