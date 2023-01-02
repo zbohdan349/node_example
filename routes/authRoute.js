@@ -40,7 +40,7 @@ router.post('/login', async (req,res) =>{
                         );
                     })
                     .catch((err) => {
-                        console.error(err);
+                        console.error(`Redis connection error: ${err?.stack || err}`);
                         res.status(500).json({err: "Server temporarily unavailable"})
                     })
             }
@@ -87,8 +87,8 @@ router.post('/renew', async (req,res) =>{
                 res.status(401).json({err:"REFRESH_TOKEN is invalid"})
             }  
         })
-        .catch(e => {
-            console.error(e);
+        .catch(err => {
+            console.error(`Redis connection error: ${err?.stack || err}`);
             res.status(500).json({err:"Server temporarily unavailable"})
         })
 })
@@ -112,8 +112,8 @@ router.post('/logout', async (req,res) =>{
                 res.status(401).json({err:"REFRESH_TOKEN is invalid"})
             }
         })
-        .catch(e => {
-            console.error(e);
+        .catch(error => {
+            console.error(`Redis connection error: ${err?.stack || err}`);
             res.status(500).json({err:"Server temporarily unavailable"})
         })
 })
