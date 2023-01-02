@@ -24,4 +24,5 @@ app.use((req, res, next) => {
 const authRoute = require('./routes/authRoute')
 app.use('/',authRoute);
 
-app.listen(process.env.APP_PORT || 3000, ()=>{ console.log("server started") });
+app.listen(process.env.APP_PORT || 3000, 
+    ()=>{ console.log(`server started on ${process.env.APP_PORT || 3000} port`)});

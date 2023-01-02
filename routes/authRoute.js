@@ -6,10 +6,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const client =require('../connection')
 
-
 router.post('/login', async (req,res) =>{
     if(!req.body.login || !req.body.password )  {
-        res.status(400).json({err:"Bad request"})
+        res.status(400).json({err: "Credential is invalid"})
         return;
     }
 
@@ -21,31 +20,34 @@ router.post('/login', async (req,res) =>{
                 user.password
             )){
             res.status(400).json({err: "Credential is invalid"});
-        }else{
-            const userInfo = {
-                _id: user._id.toString(),
-                name: user.name,
-                role: user.role
+            }else{
+                const userInfo = {
+                    _id: user._id.toString(),
+                    name: user.name,
+                    role: user.role
+                }
+                const accessToken = jwt.sign(userInfo,process.env.JWT_ACCESS_SECRET,{expiresIn:"1m"})
+                const refreshToken = jwt.sign(userInfo,process.env.JWT_REFRESH_SECRET,{expiresIn:"15d"})
+                
+                client
+                    .set(`refreshToken:${refreshToken}`, '1')
+                    .then(() => {
+                        res.status(200).json(
+                            {
+                                accessToken,
+                                refreshToken
+                            }
+                        );
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        res.status(500).json({err: "Server temporarily unavailable"})
+                    })
             }
-            const accessToken = jwt.sign(userInfo,process.env.JWT_ACCESS_SECRET,{expiresIn:"1m"})
-            const refreshToken = jwt.sign(userInfo,process.env.JWT_REFRESH_SECRET,{expiresIn:"15d"})
-            
-            client
-                .set(`refreshToken:${refreshToken}`, '1')
-                .then(() => {
-                    res.status(200).json(
-                        {
-                            accessToken,
-                            refreshToken
-                        }
-                    );
-                })
-                .catch((err) => {
-                    console.log(err);
-                    res.status(500).json({err: "Refresh token generation error"})
-                })
-        }
-    })
+        })
+        .catch(() => {
+            res.status(400).json({err: "Credential is invalid"});
+        })
 })
 
 router.post('/renew', async (req,res) =>{
@@ -67,7 +69,7 @@ router.post('/renew', async (req,res) =>{
                     User
                         .findOne({_id:decoded._id})
                         .then(user => {
-                            const accessToken =jwt.sign({
+                            const accessToken = jwt.sign({
                                 _id:user._id,
                                 name:user.name,
                                 role:user.role
@@ -86,8 +88,8 @@ router.post('/renew', async (req,res) =>{
             }  
         })
         .catch(e => {
-            console.log(e);
-            res.status(500).json({err:"Renew error"})
+            console.error(e);
+            res.status(500).json({err:"Server temporarily unavailable"})
         })
 })
 
@@ -111,8 +113,8 @@ router.post('/logout', async (req,res) =>{
             }
         })
         .catch(e => {
-            console.log(e);
-            res.status(500).json({err:"Logout error"})
+            console.error(e);
+            res.status(500).json({err:"Server temporarily unavailable"})
         })
 })
 
