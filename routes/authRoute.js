@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const client =require('../connection')
 
+
 router.post('/login', async (req,res) =>{
     if(!req.body.login || !req.body.password )  {
         res.status(400).json({err: "Credential is invalid"})
@@ -32,9 +33,11 @@ router.post('/login', async (req,res) =>{
                 client
                     .set(`refreshToken:${refreshToken}`, '1')
                     .then(() => {
+                        res.cookie("accessToken", accessToken, {
+                            httpOnly: true,
+                          });
                         res.status(200).json(
                             {
-                                accessToken,
                                 refreshToken
                             }
                         );
@@ -74,7 +77,10 @@ router.post('/renew', async (req,res) =>{
                                 name:user.name,
                                 role:user.role
                             },process.env.JWT_ACCESS_SECRET,{expiresIn:"1m"})
-                            res.status(201).json({accessToken})
+                            res.cookie("accessToken", accessToken, {
+                                httpOnly: true,
+                              });
+                            res.status(200).json()
                         })
                         .catch(() => {
                             res.status(404).json({err:"User is not found"})
