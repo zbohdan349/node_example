@@ -27,8 +27,10 @@ router.post('/login', async (req,res) =>{
                     name: user.name,
                     role: user.role
                 }
-                const accessToken = jwt.sign(userInfo,process.env.JWT_ACCESS_SECRET,{expiresIn:"1m"})
-                const refreshToken = jwt.sign(userInfo,process.env.JWT_REFRESH_SECRET,{expiresIn:"15d"})
+                const accessToken = 
+                    jwt.sign(userInfo,process.env.JWT_ACCESS_SECRET,{algorithm: 'HS384',expiresIn:"1m"})
+                const refreshToken = 
+                    jwt.sign(userInfo,process.env.JWT_REFRESH_SECRET,{ algorithm: 'HS384',expiresIn:"15d"})
                 
                 client
                     .set(`refreshToken:${refreshToken}`, '1')
@@ -80,7 +82,7 @@ router.post('/renew', async (req,res) =>{
                             res.cookie("accessToken", accessToken, {
                                 httpOnly: true,
                               });
-                            res.status(200).json()
+                            res.status(200).send()
                         })
                         .catch(() => {
                             res.status(404).json({err:"User is not found"})
